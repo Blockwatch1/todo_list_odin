@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO DO</title>
+    <style>
+        
+        button{
+            border: none;
+        }
+        :root{
+            color: #ddd;
+            border: none;
+            outline: none;
+            --background-color : #333;
+            --nav--background : rgb(71, 71, 71);
+            --navbar-width : 30vw;
+            --task-div-height : 25vh;
+            --task-div-height-expanded : 45vh;
+            --task-div-width : 30vw;
+            --task-height-uniform: 15%;
+            --background-before-after :#eee;
+            --desktop-only-display :flex;
+            --plus-button-margin-right: 90vw;
+            --add-more-button-width:6vw;
+
+        }
+        @media (prefers-color-scheme: dark) {
+            :root{
+                --background-before-after :#eee;
+            }
+}
+        @media screen and (max-width:700px){
+            :root{
+            --add-more-button-width:18vw;
+            --plus-button-margin-right: 83vw;
+            --desktop-only-display:none;
+            --navbar-width: 70vw;
+            --task-div-height : 15vh;
+            --task-div-height-expanded: 25vh;
+            --task-div-width : 70vw;
+            }
+            
+        }
+        html , body{
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: #ddd;
+            box-sizing: border-box;
+        }
+        #content{
+            display: flex;
+            flex-direction: row;
+            column-gap: 20%;
+            padding: 10%;
+            width: 80%;
+            justify-content: center;
+        }
+        #content .row .task{
+            display: block;
+            background-color: var(--nav--background);
+            border-radius: 12px;
+            height: fit-content;
+            transition: all 0.3s ease-in-out;
+            box-sizing: border-box;
+            overflow: hidden;
+            width: inherit;
+            
+        }
+        
+        .task *{
+            margin-left: 10%;
+            margin-right: 5%;
+            font-size: large;
+            white-space: normal;
+            word-break: break-word; 
+            overflow-wrap: break-word;
+        }
+        .task .only-expand{
+            display: none;
+        }
+        .task.expanded .only-expand{
+            display: block;
+        }
+        #content .row .task.expanded{
+            height: fit-content;
+            transition: all 0.3s ease-in-out;
+        }
+        .row {
+            width: var(--task-div-width);
+            display: flex;
+            flex-direction: column;
+            row-gap: 5vh;
+        }
+        
+        
+        button.project:nth-child(1){
+            margin-top: 10vh;
+        }
+        nav {
+         position: fixed;
+         display: flex;
+         flex-direction: column;
+         row-gap: 4vh;
+         overflow-y: auto;
+         min-height: 85vh;
+         height: 85vh;
+         padding-bottom: 15vh;
+         width: var(--navbar-width);
+         background-color: var(--nav--background);
+         top: 0;
+         left: 0;
+         flex: 0 0 unset;
+         /* overflow: hidden; */
+         transition: all 0.4s ease-in-out;
+        }
+        nav.close{
+            width: 0;
+        }
+        button.svg{
+        border: none;
+        border-radius: 1000px;
+        background-color: var(--nav--background);
+        position: fixed;
+        height: 7vh;
+        width: 7vh;
+        top: 0.5vh;
+        left: 0.5vh;
+        z-index: 3;
+        padding: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
+        button.svg.add{
+            z-index: 12;
+            top: 90vh;
+            left: var(--plus-button-margin-right);
+        }
+        button.svg svg{
+            height: 5vh;
+            fill: #ddd;
+            stroke: #aaa;
+        }
+
+        button.svg:hover{
+         background-color: rgb(90,90,90);
+        
+        }
+        /* for testing: */
+        .form-container{
+        display: flex;
+        justify-content: center; 
+        z-index: 12;
+        -webkit-backdrop-filter: blur(9px); 
+        backdrop-filter: blur(9px); 
+        pointer-events: all;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        height: 100%;
+        
+     }
+     .remove-display{
+        display: none;
+     }
+     .form input{
+        border-radius: 12px;
+        height: 6vh;
+        border: 3px solid black;
+     }
+     .form input:focus{
+        outline: none;
+        border: 3px solid black;
+     }
+     .form textarea:focus, .form textarea:hover{
+        box-shadow: none;
+        outline: none;
+        resize: none;
+        
+     }
+     .form textarea{
+        border-radius: 12px;
+        border: 3px solid black;
+     }
+     .form *{
+        margin-bottom: 2vh;
+     }
+     .form{
+        margin-top: 2vh;
+        color: #000;
+        border-radius: 8px;
+        background-color: gray;
+        padding: 2vh 5vw;
+        z-index: 13;
+        top: 5vh;
+        width: 25vw;
+        height: 85vh;
+        display: flex;
+        flex-direction: column;
+        border:  3px solid black;
+     }
+     .form button{
+        background-color: #333;
+        color: #aaa;
+        border-radius: 12px;
+        height: 6vh;
+        width: 9vw;
+        margin-bottom: 0;
+        font-size: 1.2rem;
+     }
+     nav .add-more{
+        position: fixed;
+        height: 6vh;
+        width: var(--add-more-button-width);
+        top: 90vh;
+        background-color: #c1c1c1;
+        left: calc( var(--navbar-width)/2.68);
+        border-radius: 12px;
+        padding: 0.5vh;
+        overflow: hidden;
+        transition: width 0.4s ease-in-out, padding 0.4s ease-in-out, left 0.4s ease-in-out, background-color 0s linear;
+
+     }
+     nav.close .add-more{
+        width:0;
+        padding: 0;
+        left: 0;
+     }
+     nav .add-more:hover{
+        background-color: #e7e6e6;
+     }
+     .title{
+        height: fit-content;
+        margin: auto;
+     }
+
+     ::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--nav--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #111;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #222;
+}
+
+::-ms-scrollbar {
+  width: 12px;
+}
+
+::-ms-scrollbar-track {
+  background: var(--nav--background);
+}
+
+::-ms-scrollbar-thumb {
+  background: #111;
+  border-radius: 6px;
+}
+
+::-ms-scrollbar-thumb:hover {
+  background: #222;
+}
+
+.svg-inline{
+    height: 6vh;
+    width: 6vh;
+    border-radius: 1000px;
+    padding: 0.5vh;
+    background-color: var(--nav--background);
+    stroke: #aaa; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}.svg-inline:hover{
+    background-color: rgb(90,90,90);
+    
+}
+.svg-inline svg{
+    height: 3vh;
+    width: 3vh;
+}
+.bottom-right{
+    display: flex;
+    width: fit-content;
+    margin-left: auto;
+    margin-bottom: 1vh;
+    margin-top: auto;
+}
+.down-arrow.rotate{
+    transition: all 0.3s linear;
+    transform: rotateZ(-180deg);
+}
+#content{
+    display: flex;
+    justify-content: space-around;
+}
+nav  > button.project > span{
+            overflow: hidden;
+            box-sizing: border-box;
+            min-height: 100%;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+            width: fit-content;
+            align-items:center;
+            justify-self: center;
+            width: 80%;
+            
+        }
+        nav  >#user-projects > button.project > span{
+            overflow: hidden;
+            box-sizing: border-box;
+            min-height: 100%;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+            width: fit-content;
+            align-items:center;
+            justify-self: center;
+            width: 80%;
+            
+        }
+        nav > #user-projects> button.project > span{
+            margin-right: -4vh;
+        }
+        nav > button.project > span{
+            margin-right: -4vh;
+        }
+.container-row-project{
+    max-height: 6vh;
+    min-height: 6vh;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+     justify-content: center;
+    flex: 0 3 100%;
+    width: 100%;
+    
+}
+.remove-project{
+        border-radius: 1000px;
+        padding: 0.5vh;
+        background-color: var(--nav--background);
+        stroke: #aaa; 
+        display: block;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 3vh;
+        width: 3vh;
+        margin-bottom: auto;
+        margin-top: auto;
+        flex-shrink: 4;
+        align-self: end;
+        justify-self: end;
+        /* margin-right: calc(-50% + 6vh); */
+        
+        }
+.remove-project:hover{
+    background-color: rgb(90,90,90);
+}
+#user-projects > *{
+    margin-top: 0;
+    margin-bottom: 4vh;
+}
+nav button.project{
+            box-sizing: border-box;
+            min-height: 6vh;
+            width: 100%;
+            padding: 0;
+            background-color: #111;
+            text-align: left;
+            color: white;
+            text-align: center;
+            font-size: larger;
+            display: flex;
+            flex-direction: column; 
+            position: relative;
+            overflow: hidden;
+
+        }
+        nav button.project span{
+            box-sizing: border-box;
+            min-height: 100%;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            width: fit-content;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        nav button.project::before{
+            height : 3px;
+            width:  0;
+            margin-left: auto;
+            background-color: var(--background-before-after);
+            content: '';
+            display: block;
+            transition: all 0.3s ease-in-out;
+        }
+        nav button.project::after{
+            height : 3px;
+            width:  0;
+            margin-right: auto;
+            filter: none;
+            background-color: var(--background-before-after);
+            content: '';
+            display: block;
+            transition: all 0.3s ease-in-out;
+        } nav button.project:hover::before{
+            width: 50%;
+        }
+        nav button.project:hover::after{
+           width: 50%;
+        }
+        .desktop-only{
+                display: var(--desktop-only-display);
+            }
+    </style>
+</head>
+<body>
+    <button id="sidebar-toggle" class="svg">
+        <svg xmlns="http://www.w3.org/2000/svg" id="sidebar-toggle" viewBox="0 0 24 24">
+        <g id="Complete">
+        <g id="align-justify">
+        <g>
+        <polygon fill="#ffffff" points="20 18 4 18 4 18 20 18 20 18"   stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <polygon fill="#ffffff" points="20 14 4 14 4 14 20 14 20 14"   stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <polygon fill="#ffffff" points="20 10 4 10 4 10 20 10 20 10"   stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <polygon fill="#ffffff" points="20 6 4 6 4 6 20 6 20 6"   stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        </g>
+        </g>
+        </svg>
+    </button>
+    <nav id="sidebar">
+        
+        <button class="project" data-custom-id="0"><div class="container-row-project"><span>Main</span></div></button>
+        <button class="project" data-custom-id="1"><div class="container-row-project"><span><span>Urgent</span></span>
+            </div></button>
+            <div id="user-projects">
+            </div>
+        <button class="add-more" id="add-more">Add Projects</button>
+    
+    </nav>
+    <div id="content">
+        <div class="row">
+        <!-- <div class="task" data-custom-id="0">
+            <p id="title-task"></p>
+            <p id="date-task"></p>
+            <p id="description-task" class="only-expand"></p>
+            <p id="priority-task" class="only-expand"></p>
+            <p id="notes-task" class="only-expand"></p>
+            <div class="bottom-right">
+                <button class="svg-inline">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g id="Complete">
+                        <g id="x-circle">
+                        <g>
+                        <circle cx="12" cy="12" data-name="--Circle" fill="none" id="_--Circle" r="10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                        <line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="14.5" x2="9.5" y1="9.5" y2="14.5"/>                        
+                        <line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="14.5" x2="9.5" y1="14.5" y2="9.5"/>                        
+                        </g>                        
+                        </g>                        
+                        </g>                        
+                        </svg>
+                </button>
+                <button class="svg-inline">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">   
+                    <g id="Complete"> 
+                    <g id="edit">
+                    <g>
+                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </g>
+                    </g>
+                    </g>
+                    </svg>
+                </button>
+                <button class="svg-inline">
+                    <svg class="down-arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">  
+                    <g id="Complete">
+                    <g id="F-Chevron">
+                    <polyline fill="none" id="Down" points="5 8.5 12 15.5 19 8.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </g>
+                    </g>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="task"></div>
+        <div class="task"></div> -->
+        </div>  
+        <div class="row desktop-only">
+        <!-- <div class="task"></div>
+        <div class="task"></div>
+        <div class="task"></div> -->
+        </div>
+    </div>
+    <button class="svg add" id="add">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <g id="Complete">
+            <g data-name="add" id="add-2">
+            <g>
+            <line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" x2="12" y1="19" y2="5"/>
+            <line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="5" x2="19" y1="12" y2="12"/>
+            </g>
+            </g>
+            </g>
+            </svg>
+    </button>
+    <script type="module" src="index.js"></script>
+</body>
+</html>
