@@ -24,6 +24,8 @@
             --desktop-only-display :flex;
             --plus-button-margin-right: 90vw;
             --add-more-button-width:6vw;
+            --form-width: 25vw;
+            --form-button-width: 8vw;
 
         }
         @media (prefers-color-scheme: dark) {
@@ -40,6 +42,8 @@
             --task-div-height : 15vh;
             --task-div-height-expanded: 25vh;
             --task-div-width : 70vw;
+            --form-width: 70vw;
+            --form-button-width: 18vw;
             }
             
         }
@@ -197,7 +201,7 @@
         padding: 2vh 5vw;
         z-index: 13;
         top: 5vh;
-        width: 25vw;
+        width: var(--form-width);
         height: 85vh;
         display: flex;
         flex-direction: column;
@@ -208,7 +212,7 @@
         color: #aaa;
         border-radius: 12px;
         height: 6vh;
-        width: 9vw;
+        width: var(--form-button-width);
         margin-bottom: 0;
         font-size: 1.2rem;
      }
