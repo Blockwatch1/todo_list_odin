@@ -183,17 +183,27 @@ function createFormContainer(element,modify) {
     descriptionTextarea.setAttribute('required', 'true');
     const importantCheckboxDiv = document.createElement('div');
     importantCheckboxDiv.style.display = 'flex';
+    importantCheckboxDiv.style.flexDirection ='row';
     importantCheckboxDiv.style.alignItems = 'center';
     const importantCheckbox = document.createElement('input');
     importantCheckbox.setAttribute('type', 'checkbox');
     importantCheckbox.setAttribute('id', 'priority');
+    let virtualCheckbox = document.createElement("div");
+    virtualCheckbox.classList.add('checkmark');
     if (currentProjectId===1){
+      virtualCheckbox.classList.add('always-checked');
       importantCheckbox.setAttribute("checked","");
       importantCheckbox.setAttribute("disabled","");
     }
     const importantLabel = document.createElement('label');
     importantLabel.setAttribute('for', 'priority');
-    importantLabel.textContent = 'Urgent';
+    importantLabel.style.display = 'flex';
+    importantLabel.style.flexDirection ='row';
+    importantLabel.style.alignItems = 'center';
+    importantLabel.appendChild(virtualCheckbox);
+    let urgentSpan = document.createElement("span");
+    urgentSpan.textContent = "Urgent";
+    importantLabel.appendChild(urgentSpan);
     const notesInputLabel = document.createElement('label');
     notesInputLabel.setAttribute('for', 'notes');
     notesInputLabel.textContent = 'Notes:';
